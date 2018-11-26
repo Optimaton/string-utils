@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <math.h>
 #include <string_utils.h>
 
 SearcherResult
@@ -33,12 +34,50 @@ naive_searcher(const char* haystack, uint32_t haystack_size,
   return searcher_result;
 }
 
+/* rolling hash */
+uint32_t hash(const char* str, uint32_t str_size)
+{
+  /* hash(str) = 
+      ((str[0] * (base^(str_size - 1))) + (str[1] * (base^(str_size-2))) + ... 
+        + (str[str_size - 1] * (base ^ 0))) mod m */
+
+  uint32_t base = 10; // TODO: let user decide the base
+  uint32_t mod_value = 101; // TODO: let user decide the mod_value
+  
+  uint32_t idx = 0;
+  uint32_t hash = 0;
+  while (str_size != 0) {
+    hash += str[idx] * pow(base, --str_size); // Optimization required, 
+        //  the whole thing has to wait one cycle for -- to complete
+    idx++;
+  }
+  
+   return (hash % mod_value);
+}
+
+
+uint32_t subsequent_hash(uint32_t previous_hash, uint32_t str_size, 
+                         const char* old_str, const char* new_str)
+{
+  /* subsequent_hash = (base * (previous_hash - ((base ^ (pattern_size - 1)) * 
+      old_pattern[0]))) + new_pattern[pattern_size - 1] mod m */
+  uint32_t base = 10; // user must be able to provide this
+  uint32_t mod_value = 101; // user must be able to set a mod value
+  return  (base * (previous_hash - ((base ^ (str_size - 1)) * 
+      old_str[0]))) + new_str[str_size - 1] % mod_value;
+}
+
+/**
+ * TODO: create context sensitive function to let users to 
+ * specify base and mod values in rolling hash
+ */
 SearcherResult 
 rabin_karp_searcher(const char* haystack, uint32_t haystack_size, 
                     const char* needle, uint32_t needle_size, 
                     uint32_t searcher_pos) 
 {
   SearcherResult searcher_result = {false, NPOS};
+  
   return searcher_result;
 }
 
