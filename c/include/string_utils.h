@@ -29,11 +29,18 @@ struct SearcherResult_t {
 
 typedef struct SearcherResult_t SearcherResult;
 
+struct RollingHash_t {
+  uint32_t dividend;  /* We are storing it to get back previous before mod */
+  uint32_t remainder; /* remainder is our real hash */
+};
+
+typedef struct RollingHash_t RollingHash;
+
 /* helper function to get the size of the string */
 uint32_t get_size(const char* str);
-uint32_t hash(const char* str, uint32_t str_size);
-uint32_t subsequent_hash(uint32_t previous_hash, uint32_t str_size,
-                         const char* old_str, const char* new_str);
+RollingHash hash(const char* str, uint32_t str_size);
+RollingHash subsequent_hash(RollingHash previous_hash, uint32_t str_size,
+                            const char* old_str, const char* new_str);
 
 /* naive search - O(nm) */
 SearcherResult 
