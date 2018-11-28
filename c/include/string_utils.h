@@ -41,6 +41,8 @@ uint32_t get_size(const char* str);
 RollingHash hash(const char* str, uint32_t str_size);
 RollingHash subsequent_hash(RollingHash previous_hash, uint32_t str_size,
                             const char* old_str, const char* new_str);
+void set_rolling_hash_base(uint32_t cbase);
+void set_rolling_hash_mod(uint32_t cmod);
 
 /* naive search - O(nm) */
 SearcherResult 

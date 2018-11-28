@@ -35,6 +35,20 @@ naive_searcher(const char* haystack, uint32_t haystack_size,
   return searcher_result;
 }
 
+static uint32_t base = 17;
+static uint32_t mod_val = 101;
+
+void
+set_rolling_hash_base(uint32_t cbase)
+{
+  base = cbase;
+}
+
+void
+set_rolling_hash_mod(uint32_t cmod_val)
+{
+  mod_val = cmod_val;
+}
 
 /* rolling hash */
 RollingHash hash(const char* str, uint32_t str_size)
@@ -43,8 +57,6 @@ RollingHash hash(const char* str, uint32_t str_size)
       ((str[0] * (base^(str_size - 1))) + (str[1] * (base^(str_size-2))) + ... 
         + (str[str_size - 1] * (base ^ 0))) mod m */
   RollingHash hash = {0, 0};
-  uint32_t base = 17; // TODO: let user decide the base
-  uint32_t mod_value = 101;
 
   uint32_t idx = 0;
   while (str_size != 0) {
@@ -53,7 +65,7 @@ RollingHash hash(const char* str, uint32_t str_size)
     idx++;
   }
   
-  hash.remainder = hash.dividend % mod_value;
+  hash.remainder = hash.dividend % mod_val;
   return hash;
 }
 
@@ -63,21 +75,16 @@ RollingHash subsequent_hash(RollingHash previous_hash, uint32_t str_size,
 {
   /* subsequent_hash = (base * (previous_hash - ((base ^ (pattern_size - 1)) * 
       old_pattern[0]))) + new_pattern[pattern_size - 1] mod m */
-  uint32_t base = 17; // user must be able to provide this
-  uint32_t mod_value = 101;
   RollingHash new_hash = {0, 0};
   new_hash.dividend = (base * (previous_hash.dividend - (pow(base, str_size - 1) * 
      old_str[0]))) + new_str[str_size - 1];
 
-  new_hash.remainder = new_hash.dividend % mod_value;
+  new_hash.remainder = new_hash.dividend % mod_val;
 
   return new_hash;
 }
 
-/**
- * TODO: create context sensitive function to let users to 
- * specify base and mod values in rolling hash
- */
+
 SearcherResult 
 rabin_karp_searcher(const char* haystack, uint32_t haystack_size, 
                     const char* needle, uint32_t needle_size, 
