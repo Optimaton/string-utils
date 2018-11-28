@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <math.h>
 #include <string_utils.h>
 
 SearcherResult
@@ -11,34 +12,115 @@ naive_searcher(const char* haystack, uint32_t haystack_size,
 { 
   SearcherResult searcher_result = {false, NPOS};
 
-  uint8_t mismatch = false;
+  uint8_t mismatch = true;
   int32_t pos = NPOS;
   for (uint32_t i = searcher_pos; i < haystack_size; i++) {
     pos = i;
     for (uint32_t j = 0; j < needle_size; j++) {
       if (haystack[i] != needle[j]) {
-        mismatch = true;
         break;
+      }
+      if (j == needle_size - 1) { 
+        mismatch = false; 
       }
       i++;
     }
     if (mismatch == false) {
-      searcher_result.is_present = true;
+      searcher_result.is_present = !mismatch;
       searcher_result.pos = pos;
-    } else {
-      mismatch = false;
+      break;
     }
   }
 
   return searcher_result;
 }
 
+
+/* rolling hash */
+RollingHash hash(const char* str, uint32_t str_size)
+{
+  /* hash(str) = 
+      ((str[0] * (base^(str_size - 1))) + (str[1] * (base^(str_size-2))) + ... 
+        + (str[str_size - 1] * (base ^ 0))) mod m */
+  RollingHash hash = {0, 0};
+  uint32_t base = 17; // TODO: let user decide the base
+  uint32_t mod_value = 101;
+
+  uint32_t idx = 0;
+  while (str_size != 0) {
+    hash.dividend += str[idx] * pow(base, --str_size); // Optimization required, 
+        //  the whole thing has to wait one cycle for -- to complete
+    idx++;
+  }
+  
+  hash.remainder = hash.dividend % mod_value;
+  return hash;
+}
+
+
+RollingHash subsequent_hash(RollingHash previous_hash, uint32_t str_size, 
+                            const char* old_str, const char* new_str)
+{
+  /* subsequent_hash = (base * (previous_hash - ((base ^ (pattern_size - 1)) * 
+      old_pattern[0]))) + new_pattern[pattern_size - 1] mod m */
+  uint32_t base = 17; // user must be able to provide this
+  uint32_t mod_value = 101;
+  RollingHash new_hash = {0, 0};
+  new_hash.dividend = (base * (previous_hash.dividend - (pow(base, str_size - 1) * 
+     old_str[0]))) + new_str[str_size - 1];
+
+  new_hash.remainder = new_hash.dividend % mod_value;
+
+  return new_hash;
+}
+
+/**
+ * TODO: create context sensitive function to let users to 
+ * specify base and mod values in rolling hash
+ */
 SearcherResult 
 rabin_karp_searcher(const char* haystack, uint32_t haystack_size, 
                     const char* needle, uint32_t needle_size, 
                     uint32_t searcher_pos) 
 {
   SearcherResult searcher_result = {false, NPOS};
+  
+  if (strlen(haystack + searcher_pos) < needle_size) {
+    return searcher_result;
+  }
+  
+  RollingHash needle_hash = hash(needle, needle_size);
+  RollingHash haystack_hash = hash(haystack + searcher_pos, needle_size);
+
+  uint8_t mismatch = true;
+  int32_t pos = NPOS;
+  for (uint32_t i = searcher_pos; i < haystack_size; i++) {
+    pos = i;
+    if (needle_hash.remainder != haystack_hash.remainder) {
+     haystack_hash = subsequent_hash(haystack_hash, needle_size, 
+                                     haystack + i, haystack + i + 1);
+    } else {
+      mismatch = false;
+      break;
+    } 
+  }
+
+  if (mismatch == false) {
+    int j = 0;
+    for (uint32_t i = pos; i < needle_size; i++) {
+      if (haystack[i] != needle[j]) {
+        mismatch = true;
+        break;
+      }
+      j++;
+    }
+  }
+
+  if (mismatch == false) {
+    searcher_result.is_present = !mismatch;
+    searcher_result.pos = pos;
+  }
+
   return searcher_result;
 }
 
@@ -142,12 +224,10 @@ search(const char* haystack, const char* needle, uint32_t searcher_pos,
   }
 
   uint32_t haystack_size = get_size(haystack);
-  if (searcher_pos > 0) {
-    haystack_size = haystack_size - searcher_pos + 1;
-  }
   uint32_t needle_size = get_size(needle);
 
-  if (haystack_size < needle_size) {
+  // user has to specify searcher_pos
+  if (haystack_size + searcher_pos < needle_size) {
     return searcher_result;
   }
   
