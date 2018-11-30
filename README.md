@@ -1,13 +1,12 @@
 ---
 string-utils: >-
-  It is a small lightweight C/C++ library that helps in string utilities like
-  searching for a substring, finding the position of substring in a string etc
-  but with added functionalities like choosing algorithm
+  It is a small lightweight C/C++ library written in C that helps in string 
+  utilities like searching for a substring, finding the position of substring 
+  in a string etc but with support for specifying the algorithm of your choice
 ---
 
 # Example:  
 
-## In C
 **Prototype of `is_substring` function:**
 
 ```c
@@ -18,6 +17,7 @@ Arg 2: const char*
 Arg 3: position in haystack to start search from
 Arg 4: searcher is a fancy name for set of algorithms. Please find the list below
 ```
+
 ## **List of algorithms provided for searching:**
 > - [x] `NAIVE`              
 > - [x] `RABIN_KARP`                            
@@ -31,15 +31,3 @@ Arg 4: searcher is a fancy name for set of algorithms. Please find the list belo
 > - [ ] `BOM`
 > - [ ] `SET_BOM`
 
-# TODO
-
-## In C++
-**Prototype of `contains` function:**
-```c++
-String str("Some Random String");
-bool is_present = str.contains("ome R", searcher_pos, searcher);
-Return type: bool
-Arg 1: string literal or another string or char array
-Arg 2: position in haystack to start search from
-Arg 3: searcher - enumeration of algorithms
-```
