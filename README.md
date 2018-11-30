@@ -10,7 +10,7 @@ string-utils: >-
 ## In C
 **Prototype of `is_substring` function:**
 
-```
+```c
 is_substring(haystack, needle, searcher_pos, searcher);
 Return type: bool
 Arg 1: const char* 
@@ -35,7 +35,7 @@ Arg 4: searcher is a fancy name for set of algorithms. Please find the list belo
 
 ## In C++
 **Prototype of `contains` function:**
-```
+```c++
 String str("Some Random String");
 bool is_present = str.contains("ome R", searcher_pos, searcher);
 Return type: bool
