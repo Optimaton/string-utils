@@ -19,19 +19,19 @@ Arg 3: position in haystack to start search from
 Arg 4: searcher is a fancy name for set of algorithms. Please find the list below
 ```
 ## **List of algorithms provided for searching:**
-
->     NAIVE,                 
->     RABIN_KARP,                            
->     KNUTH_MORRIS_PRAT,         
->     AHO_CORASICK,               
->     BOYRE_MOORE,           
->     BITAP, 
->     COMMENTZ_WALTER,  
->     TWO_WAY,  
->     BNDM,  
->     BOM, 
->     SET_BOM
-
+```
+NAIVE,                 
+RABIN_KARP,                            
+KNUTH_MORRIS_PRAT,         
+AHO_CORASICK,               
+BOYRE_MOORE,           
+BITAP, 
+COMMENTZ_WALTER,  
+TWO_WAY,  
+BNDM,  
+BOM, 
+SET_BOM
+```
 # TODO
 
 ## In C++
