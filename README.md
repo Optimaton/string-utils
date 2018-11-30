@@ -1,7 +1,9 @@
 # string-utils
-It is a small lightweight C/C++ library that helps in string utilities like searching for a substring, finding the position of substring in a string etc but with added functionalities like choosing algorithms to use from and many more.
 
-The users need not worry about compatibility here. **Although the same functions can be used both in C/C++ but we are providing seperate apis for C and C++ that are written to take advantage of the language's features.**
+---
+description >-
+It is a small lightweight C/C++ library that helps in string utilities like searching for a substring, finding the position of substring in a string etc but with added functionalities like choosing algorithms to use from and many more.
+---
 
 
 # Example:  
