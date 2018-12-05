@@ -12,7 +12,7 @@ If you wish to use it as a library, I mean a static lib(.o file):
 1. go to root dir of this project, 
 2. run `gcc -std=c99 -I include/ example/* src/* -o string_utils.o -lm`
 3. run `ar -rc libstringutils.a string_utils.o`
-4. Now just add it to your Makefile, CMakeLists or if you are using just for one time, call it from command line with your gcc like this: `gcc -std=c99 -I <path-to-your-include> <your-source-dirs> -L <path-to-libstringutils.a>`-lm
+4. Now just add it to your Makefile, CMakeLists or if you are using just for one time, call it from command line with gcc like this: `gcc -std=c99 -I <path-to-your-include> <your-source-dirs> -L <path-to-libstringutils.a>`-lm
 
 If you wish to use it as is:
 1. Just copy the src to your src,
