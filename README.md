@@ -4,7 +4,7 @@ It is a small lightweight C/C++ library written in C that helps in string utilit
 ## The why ?
 Sometime back, while I was trying to find the implementation of `find` in C++, I got to know that it uses a plain old brute force search which is `O(mn), where n is the size of the string being searched and n is the size of the substring being searched for`
 
-So, I though why not give users the options to use their choice of algorithm. Before someone says that there is already `std::search` in C++17 with support for specifying algorithms(only `boyre-moore` and `boyre-moore-horspool`). I do know that. But where is the fun if you are not learning in the process of doing, So I decided to write all of them by myself. And thats how this project began...
+So, I thought why not give users the options to use their choice of algorithm. Before someone says that there is already `std::search` in C++17 with support for specifying algorithms(only `boyre-moore` and `boyre-moore-horspool`). I do know that. But where is the fun if you are not learning in the process of doing, So I decided to write all of them by myself. And thats how this project began...
 
 ## Usage
 It is pretty simple to use.
