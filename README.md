@@ -43,7 +43,7 @@ Arg 4: searcher is a fancy name for set of algorithms. Please find the list belo
 > ***Searchers***
 > - [x] `NAIVE`              
 > - [x] `RABIN_KARP`                            
-> - [ ] `KNUTH_MORRIS_PRAT`       
+> - [x] `KNUTH_MORRIS_PRAT`       
 > - [ ] `AHO_CORASICK`           
 > - [ ] `BOYRE_MOORE`           
 > - [ ] `BITAP`

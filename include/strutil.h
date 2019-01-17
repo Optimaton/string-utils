@@ -1,5 +1,5 @@
-#ifndef __STRING_UTILS__
-#define __STRING_UTILS__
+#ifndef __STRUTIL__
+#define __STRUTIL__
 #define NPOS -1
 
 /* Enumeration for choosing an algorithm of choice */
@@ -43,6 +43,12 @@ RollingHash subsequent_hash(RollingHash previous_hash, uint32_t str_size,
                             const char* old_str, const char* new_str);
 void set_rolling_hash_base(uint32_t cbase);
 void set_rolling_hash_mod(uint32_t cmod);
+
+/* helper function to generate lookup table for kmp
+ * Matches prefix and suffix to generate nav table
+ * for kmp algorithm
+ */
+uint32_t* kmp_lookup_gen(const char* haystack, uint32_t needle_size);
 
 /* naive search - O(nm) */
 SearcherResult 
@@ -125,4 +131,4 @@ bool is_substring(const char* haystack, const char* needle,
 int32_t find_pos(const char* needle, const char* haystack, 
                   uint32_t searcher_pos, const Searcher searcher);
 
-#endif // __STRING_UTILS__
+#endif // __STRUTIL__

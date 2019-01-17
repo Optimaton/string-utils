@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
-#include <string_utils.h>
+#include <strutil.h>
 
 SearcherResult
 naive_searcher(const char* haystack, uint32_t haystack_size, 
@@ -131,12 +131,86 @@ rabin_karp_searcher(const char* haystack, uint32_t haystack_size,
   return searcher_result;
 }
 
+uint32_t* 
+kmp_lookup_gen(const char* needle, uint32_t needle_size)
+{
+  uint32_t* kmp_lookup = (int*)malloc(sizeof(uint32_t) * needle_size);
+  memset(kmp_lookup, 0, needle_size);
+  uint32_t i = 0;
+
+  for (uint32_t j = 1; needle[j] != '\0'; j++) {
+    if (needle[i] == needle[j]) {
+      kmp_lookup[j] = kmp_lookup[j - 1] + 1;
+      i++;
+    } else {
+      while (i > 0) {
+        i = kmp_lookup[i - 1];
+        if (needle[i] == needle[j]) {
+          kmp_lookup[j] = kmp_lookup[i] + 1;
+          break;
+        }
+      }
+
+      /* if we have come here it means i = 0 and
+       * kmp_lookup is still empty; only then
+       * will it enter the if statement below
+       */
+      if (kmp_lookup[j] == 0) {
+        if (kmp_lookup[i] == kmp_lookup[j]) {
+          kmp_lookup[j] = kmp_lookup[i] + 1; 
+        }
+      } // else the kmp_lookup would have been already
+        // populated in the while loop
+    }
+  }
+  
+  return kmp_lookup;
+}
+
 SearcherResult
 knuth_morris_prat_searcher(const char* haystack, uint32_t haystack_size, 
                            const char* needle, uint32_t needle_size, 
                            uint32_t searcher_pos)
 {
   SearcherResult searcher_result = {false, NPOS};
+  uint32_t* kmp_lookup = kmp_lookup_gen(needle, needle_size);
+  uint8_t mismatch = true;
+  int32_t pos = NPOS;
+  uint32_t j = 0;
+
+  for (uint32_t i = searcher_pos; i < haystack_size; i++) {
+    if (j == needle_size - 1) {
+      mismatch = false; 
+      pos = i - (needle_size - 1);
+      break;
+    }
+    if (haystack[i] == needle[j]) {
+      j++;
+    } else {
+      while (j > 0) {
+        j = kmp_lookup[j - 1];
+        if (haystack[i] == needle[j]) {
+          j++;
+          break;
+        }
+      }
+      /* Inefficient code: everytime there is a mismatch it will
+       * enter this part, same is the case with lookup generator
+       * TODO: fix this, also in lookup generator
+       */
+      if (j == 0) {
+        if (haystack[i] == needle[j]) {
+          j++;
+        }
+      }
+    }
+  }
+ 
+  if (mismatch == false) {
+   searcher_result.is_present = !mismatch;
+   searcher_result.pos = pos;
+  }
+  
   return searcher_result;
 }
 
@@ -234,7 +308,9 @@ search(const char* haystack, const char* needle, uint32_t searcher_pos,
   uint32_t needle_size = get_size(needle);
 
   // user has to specify searcher_pos
-  if (haystack_size + searcher_pos < needle_size) {
+  if (haystack_size + searcher_pos < needle_size ||
+    haystack_size - searcher_pos < needle_size ||
+    searcher_pos > haystack_size) {
     return searcher_result;
   }
   
