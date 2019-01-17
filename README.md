@@ -1,4 +1,4 @@
-# string-utils
+# strutil
 It is a small lightweight C/C++ library written in C that helps in string utilities like searching for a substring, finding the position of substring in a string etc but with support for specifying the algorithm of your choice.
 
 ## The why ?
